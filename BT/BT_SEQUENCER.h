@@ -6,9 +6,6 @@
 //If a child task returns success then it will sequentially run the next task. If all child tasks return success then it will return success."
 //--------------------
 class BT_SEQUENCER : public BT_NODE {
-private:
-    size_t CurrentChildIndex = 0;
-
 public:
     BT_SEQUENCER(std::string name, BT_NODE* parent, size_t childrenMaxCount);
     BT_SEQUENCER(std::string name, size_t childrenMaxCount);

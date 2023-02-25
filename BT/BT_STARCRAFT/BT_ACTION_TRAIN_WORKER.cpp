@@ -22,16 +22,21 @@ BT_NODE::State BT_ACTION_TRAIN_WORKER::TrainWorker(void* data)
 
     const BWAPI::UnitType workerType = BWAPI::Broodwar->self()->getRace().getWorker();
     const BWAPI::Unit myDepot = Tools::GetDepot();
+    bool startedBuilding = false;
 
-    // if we have a valid depot unit and it's currently not training something, train a worker
-    // there is no reason for a bot to ever use the unit queueing system, it just wastes resources
-    if (myDepot && !myDepot->isTraining()) { 
-        myDepot->train(workerType); 
-        BWAPI::Error error = BWAPI::Broodwar->getLastError();
-        if(error!=BWAPI::Errors::None)
-            return BT_NODE::FAILURE;
-        else return BT_NODE::SUCCESS;
+    for (BWAPI::Unit unit : BWAPI::Broodwar->self()->getUnits())
+    {
+        if ((unit->getType() == BWAPI::UnitTypes::Zerg_Egg && (unit->getTrainingQueue().at(0) == BWAPI::UnitTypes::Zerg_Overlord)))
+        {
+            return BT_NODE::SUCCESS;
+        }
     }
 
-    return BT_NODE::FAILURE;
+    startedBuilding = myDepot->train(workerType);
+
+    if (startedBuilding) {
+        pData->step1 = true;
+        return BT_NODE::SUCCESS;
+    }
+    return BT_NODE::RUNNING;
 }

@@ -19,4 +19,6 @@ public:
 	int nWantedWorkersFarmingMinerals;
 
 	std::unordered_set<BWAPI::Unit> unitsFarmingMinerals;
+
+	bool step1;
 };

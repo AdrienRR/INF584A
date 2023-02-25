@@ -8,21 +8,22 @@ BT_NODE::State BT_SELECTOR::Evaluate(void* data) {
 
     BT_NODE::Evaluate(data);
 
-    BT_NODE::State  childState = Children[CurrentChildIndex]->Evaluate(data);
-    if (childState != FAILURE)
-        return ReturnState(childState);
+    for (size_t childIdx = 0; childIdx < ChildrenCount; ++childIdx) {
+        BT_NODE::State  childState = Children[childIdx]->Evaluate(data);
+        if (childState == BT_NODE::State::SUCCESS) {
+            return BT_NODE::State::SUCCESS;
+        }
+        if (childState == BT_NODE::State::RUNNING) {
+            return BT_NODE::State::RUNNING;
+        }
+    }
+    return BT_NODE::State::FAILURE;
 
-    CurrentChildIndex++;
-    if (CurrentChildIndex == ChildrenCount)
-        return Failure();
-    else
-        return Running();
 }
 
 void BT_SELECTOR::Reset()
 {
     BT_NODE::Reset();
-    CurrentChildIndex = 0;
 }
 
 std::string BT_SELECTOR::GetDescription()

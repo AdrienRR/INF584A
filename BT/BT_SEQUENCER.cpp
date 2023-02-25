@@ -11,21 +11,21 @@ BT_NODE::State BT_SEQUENCER::Evaluate(void* data) {
 
     BT_NODE::Evaluate(data);
 
-    BT_NODE::State  childState = Children[CurrentChildIndex]->Evaluate(data);
-    if (childState != SUCCESS)
-        return ReturnState(childState);
-
-    CurrentChildIndex++;
-    if (CurrentChildIndex == ChildrenCount)
-        return Success();
-    else
-        return Running();
+    for (size_t childIdx = 0; childIdx < ChildrenCount; ++childIdx) {
+        BT_NODE::State  childState = Children[childIdx]->Evaluate(data);
+        if (childState == BT_NODE::State::FAILURE) {
+            return BT_NODE::State::FAILURE;
+        }
+        if (childState == BT_NODE::State::RUNNING) {
+            return BT_NODE::State::RUNNING;
+        }
+    }
+    return BT_NODE::State::SUCCESS;
 }
 
 void BT_SEQUENCER::Reset()
 {
     BT_NODE::Reset();
-    CurrentChildIndex = 0;
 }
 
 std::string BT_SEQUENCER::GetDescription()
