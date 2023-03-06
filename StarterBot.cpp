@@ -58,6 +58,10 @@ StarterBot::StarterBot()
     BT_CONDITION_STEP_3* pConditionStep3 = new BT_CONDITION_STEP_3("Step3Condition", pStep3);
     BT_ACTION_TRAIN_ZERGLINGS* pMakeZerglings = new BT_ACTION_TRAIN_ZERGLINGS("MakeZerglingsArmy", pStep3);
 
+    if (pBuildOrder->SUCCESS) {
+        BT_ACTION_SEND_ZERGLINGS* pSendZerglings = new BT_ACTION_SEND_ZERGLINGS("SendZerglings", pParallelSeq);
+    }
+
 
     pData = new Data();
     pData->currMinerals = 0;
