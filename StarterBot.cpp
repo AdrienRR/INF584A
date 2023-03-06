@@ -6,8 +6,9 @@
 StarterBot::StarterBot()
 {
     pBT = new BT_DECORATOR("EntryPoint", nullptr);
-    
+
     BT_PARALLEL_SEQUENCER* pParallelSeq = new BT_PARALLEL_SEQUENCER("MainParallelSequence", pBT, 10);
+
 
     //Checking the overlord health
     BT_DECO_REPEATER* pOverlordForeverRepeater = new BT_DECO_REPEATER("RepeatForeverOverlord", pParallelSeq, 0, true, false);
@@ -22,12 +23,11 @@ StarterBot::StarterBot()
     BT_DECO_CONDITION_BASE_FOUND* pFoundBase = new BT_DECO_CONDITION_BASE_FOUND("FoundBase", pSelectorOverlordEnoughHP);
 
     //TEMP !!! SHOULD NOT BE FLEE BUT ZIG ZAG
-    BT_ACTION_FLEE_OVERLORD* pZigZagOverlord = new BT_ACTION_FLEE_OVERLORD("ZigZagOverlord", pFoundBase);
+    BT_ACTION_ZIGZAG_OVERLORD* pZigZagOverlord = new BT_ACTION_ZIGZAG_OVERLORD("ZigZagOverlord", pFoundBase);
 
     BT_ACTION_SCOUT_OVERLORD* pScoutOverlord = new BT_ACTION_SCOUT_OVERLORD("ScoutOverlord", pSelectorOverlordEnoughHP);
 
     BT_ACTION_FLEE_OVERLORD* pFleeOverlord = new BT_ACTION_FLEE_OVERLORD("FleeOverlord", pSelectorOverlord);
-
 
 
 
@@ -36,15 +36,12 @@ StarterBot::StarterBot()
     BT_DECO_CONDITION_NOT_ENOUGH_WORKERS_FARMING_MINERALS* pNotEnoughWorkersFarmingMinerals = new BT_DECO_CONDITION_NOT_ENOUGH_WORKERS_FARMING_MINERALS("NotEnoughWorkersFarmingMinerals", pFarmingMineralsForeverRepeater);
     BT_ACTION_SEND_IDLE_WORKER_TO_MINERALS* pSendWorkerToMinerals = new BT_ACTION_SEND_IDLE_WORKER_TO_MINERALS("SendWorkerToMinerals", pNotEnoughWorkersFarmingMinerals);
 
-    //Training Workers
-    //BT_DECO_REPEATER* pTrainingWorkersForeverRepeater = new BT_DECO_REPEATER("RepeatForeverTrainingWorkers", pParallelSeq, 0, true, false);
-    //BT_DECO_CONDITION_NOT_ENOUGH_WORKERS* pNotEnoughWorkers = new BT_DECO_CONDITION_NOT_ENOUGH_WORKERS("NotEnoughWorkers", pTrainingWorkersForeverRepeater);
-    //BT_ACTION_TRAIN_WORKER* pTrainWorker = new BT_ACTION_TRAIN_WORKER("TrainWorker", pNotEnoughWorkers);
-
     //Build Additional Supply Provider
-    //BT_DECO_REPEATER* pBuildSupplyProviderForeverRepeater = new BT_DECO_REPEATER("RepeatForeverBuildSupplyProvider", pParallelSeq, 0, true, false);
-    //BT_DECO_CONDITION_NOT_ENOUGH_SUPPLY* pNotEnoughSupply = new BT_DECO_CONDITION_NOT_ENOUGH_SUPPLY("NotEnoughSupply", pBuildSupplyProviderForeverRepeater);
-    //BT_ACTION_BUILD_SUPPLY_PROVIDER* pBuildSupplyProvider = new BT_ACTION_BUILD_SUPPLY_PROVIDER("BuildSupplyProvider", pNotEnoughSupply);
+    BT_DECO_REPEATER* pBuildSupplyProviderForeverRepeater = new BT_DECO_REPEATER("RepeatForeverBuildSupplyProvider", pParallelSeq, 0, true, false);
+    BT_DECO_CONDITION_NOT_ENOUGH_SUPPLY* pNotEnoughSupply = new BT_DECO_CONDITION_NOT_ENOUGH_SUPPLY("NotEnoughSupply", pBuildSupplyProviderForeverRepeater);
+    BT_ACTION_BUILD_SUPPLY_PROVIDER* pBuildSupplyProvider = new BT_ACTION_BUILD_SUPPLY_PROVIDER("BuildSupplyProvider", pNotEnoughSupply);
+
+
 
     //Build Order
     BT_SEQUENCER* pBuildOrder = new BT_SEQUENCER("BuildOrderSequence", pParallelSeq, 10);
@@ -61,6 +58,11 @@ StarterBot::StarterBot()
     BT_CONDITION_STEP_3* pConditionStep3 = new BT_CONDITION_STEP_3("Step3Condition", pStep3);
     BT_ACTION_TRAIN_ZERGLINGS* pMakeZerglings = new BT_ACTION_TRAIN_ZERGLINGS("MakeZerglingsArmy", pStep3);
 
+    if (pBuildOrder->SUCCESS) {
+        BT_ACTION_SEND_ZERGLINGS* pSendZerglings = new BT_ACTION_SEND_ZERGLINGS("SendZerglings", pParallelSeq);
+    }
+
+
     pData = new Data();
     pData->currMinerals = 0;
     pData->thresholdMinerals = THRESHOLD1_MINERALS;
@@ -71,7 +73,6 @@ StarterBot::StarterBot()
     pData->nWantedWorkersFarmingMinerals = NWANTED_WORKERS_FARMING_MINERALS;
 
     pData->step1 = false;
-
 
 
     //FIND THE OVERLORD 
@@ -95,9 +96,9 @@ StarterBot::StarterBot()
 void StarterBot::onStart()
 {
     // Set our BWAPI options here    
-	BWAPI::Broodwar->setLocalSpeed(42);
+    BWAPI::Broodwar->setLocalSpeed(10);
     BWAPI::Broodwar->setFrameSkip(0);
-    
+
     // Enable the flag that tells BWAPI top let users enter input while bot plays
     BWAPI::Broodwar->enableFlag(BWAPI::Flag::UserInput);
 
@@ -113,7 +114,7 @@ void StarterBot::onFrame()
 
     pData->currMinerals = BWAPI::Broodwar->self()->minerals();
     pData->currSupply = Tools::GetUnusedSupply(true);
-    
+
     if (pBT != nullptr && pBT->Evaluate(pData) != BT_NODE::RUNNING)
     {
         delete (BT_DECORATOR*)pBT;
@@ -210,7 +211,7 @@ void StarterBot::onEnd(bool isWinner)
 // Called whenever a unit is destroyed, with a pointer to the unit
 void StarterBot::onUnitDestroy(BWAPI::Unit unit)
 {
-	//if the unit is farming then remove it from data structure
+    //if the unit is farming then remove it from data structure
     if (pData->unitsFarmingMinerals.contains(unit)) pData->unitsFarmingMinerals.erase(unit);
 }
 
@@ -218,12 +219,12 @@ void StarterBot::onUnitDestroy(BWAPI::Unit unit)
 // Zerg units morph when they turn into other units
 void StarterBot::onUnitMorph(BWAPI::Unit unit)
 {
-	
+
 }
 
 // Called whenever a text is sent to the game by a user
-void StarterBot::onSendText(std::string text) 
-{ 
+void StarterBot::onSendText(std::string text)
+{
     if (text == "/map")
     {
         m_mapTools.toggleDraw();
@@ -234,33 +235,33 @@ void StarterBot::onSendText(std::string text)
 // Units are created in buildings like barracks before they are visible, 
 // so this will trigger when you issue the build command for most units
 void StarterBot::onUnitCreate(BWAPI::Unit unit)
-{ 
-	
+{
+
 }
 
 // Called whenever a unit finished construction, with a pointer to the unit
 void StarterBot::onUnitComplete(BWAPI::Unit unit)
 {
-	
+
 }
 
 // Called whenever a unit appears, with a pointer to the destroyed unit
 // This is usually triggered when units appear from fog of war and become visible
 void StarterBot::onUnitShow(BWAPI::Unit unit)
-{ 
-	
+{
+
 }
 
 // Called whenever a unit gets hidden, with a pointer to the destroyed unit
 // This is usually triggered when units enter the fog of war and are no longer visible
 void StarterBot::onUnitHide(BWAPI::Unit unit)
-{ 
-	
+{
+
 }
 
 // Called whenever a unit switches player control
 // This usually happens when a dark archon takes control of a unit
 void StarterBot::onUnitRenegade(BWAPI::Unit unit)
-{ 
-	
+{
+
 }

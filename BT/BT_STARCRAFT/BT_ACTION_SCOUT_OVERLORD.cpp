@@ -59,6 +59,7 @@ BT_NODE::State BT_ACTION_SCOUT_OVERLORD::MoveOverlord(void* data)
                         BWAPI::Broodwar->sendText(message.c_str());
 
                         pData->enemyBaseFound = true;
+                        pData->enemyBase = targetPosition;
                     }
                 }
 
