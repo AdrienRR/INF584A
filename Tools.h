@@ -1,6 +1,8 @@
 #pragma once
 
 #include <BWAPI.h>
+#include <cmath>
+
 
 namespace Tools
 {
@@ -24,4 +26,5 @@ namespace Tools
 
     void DrawUnitHealthBars();
     void DrawHealthBar(BWAPI::Unit unit, double ratio, BWAPI::Color color, int yOffset);
+    double distance(BWAPI::Position a, BWAPI::Position b);
 }

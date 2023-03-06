@@ -173,6 +173,12 @@ int Tools::GetTotalSupply(bool inProgress)
     return totalSupply;
 }
 
+double Tools::distance(BWAPI::Position a, BWAPI::Position b) {
+    int dx = a.x - b.x;
+    int dy = a.y - b.y;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
 void Tools::DrawUnitHealthBars()
 {
     // how far up from the unit to draw the health bar
