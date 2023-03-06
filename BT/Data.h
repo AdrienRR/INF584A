@@ -21,4 +21,12 @@ public:
 	std::unordered_set<BWAPI::Unit> unitsFarmingMinerals;
 
 	bool step1;
+
+	BWAPI::Unit myOverlord;
+
+	std::vector<BWAPI::TilePosition> visistedStartingPositions;
+
+	BWAPI::Position enemyBase;
+
+	bool enemyBaseFound;
 };

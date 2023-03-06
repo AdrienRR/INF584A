@@ -9,6 +9,28 @@ StarterBot::StarterBot()
     
     BT_PARALLEL_SEQUENCER* pParallelSeq = new BT_PARALLEL_SEQUENCER("MainParallelSequence", pBT, 10);
 
+    //Checking the overlord health
+    BT_DECO_REPEATER* pOverlordForeverRepeater = new BT_DECO_REPEATER("RepeatForeverOverlord", pParallelSeq, 0, true, false);
+
+
+    BT_SELECTOR* pSelectorOverlord = new BT_SELECTOR("OverlordSelector", pOverlordForeverRepeater, 10);
+
+    BT_DECO_CONDITION_HP_OVERLORD* pHpOverlord = new BT_DECO_CONDITION_HP_OVERLORD("HpOverlord", pSelectorOverlord);
+
+    BT_SELECTOR* pSelectorOverlordEnoughHP = new BT_SELECTOR("OverlordSelectorEnoughHP", pHpOverlord, 10);
+
+    BT_DECO_CONDITION_BASE_FOUND* pFoundBase = new BT_DECO_CONDITION_BASE_FOUND("FoundBase", pSelectorOverlordEnoughHP);
+
+    //TEMP !!! SHOULD NOT BE FLEE BUT ZIG ZAG
+    BT_ACTION_FLEE_OVERLORD* pZigZagOverlord = new BT_ACTION_FLEE_OVERLORD("ZigZagOverlord", pFoundBase);
+
+    BT_ACTION_SCOUT_OVERLORD* pScoutOverlord = new BT_ACTION_SCOUT_OVERLORD("ScoutOverlord", pSelectorOverlordEnoughHP);
+
+    BT_ACTION_FLEE_OVERLORD* pFleeOverlord = new BT_ACTION_FLEE_OVERLORD("FleeOverlord", pSelectorOverlord);
+
+
+
+
     //Farming Minerals forever
     BT_DECO_REPEATER* pFarmingMineralsForeverRepeater = new BT_DECO_REPEATER("RepeatForeverFarmingMinerals", pParallelSeq, 0, true, false);
     BT_DECO_CONDITION_NOT_ENOUGH_WORKERS_FARMING_MINERALS* pNotEnoughWorkersFarmingMinerals = new BT_DECO_CONDITION_NOT_ENOUGH_WORKERS_FARMING_MINERALS("NotEnoughWorkersFarmingMinerals", pFarmingMineralsForeverRepeater);
