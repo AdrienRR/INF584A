@@ -71,6 +71,24 @@ StarterBot::StarterBot()
     pData->nWantedWorkersFarmingMinerals = NWANTED_WORKERS_FARMING_MINERALS;
 
     pData->step1 = false;
+
+
+
+    //FIND THE OVERLORD 
+    for (auto& unit : BWAPI::Broodwar->self()->getUnits())
+    {
+        if (unit->getType() == BWAPI::UnitTypes::Zerg_Overlord)
+        {
+            pData->myOverlord = unit;
+            break;
+        }
+    }
+
+    //CREATE THE LIST OF VISISTED STARTING POINTS
+    pData->visistedStartingPositions = std::vector<BWAPI::TilePosition>();
+    pData->visistedStartingPositions.push_back(BWAPI::Broodwar->self()->getStartLocation());
+    pData->enemyBase;
+    pData->enemyBaseFound = false;
 }
 
 // Called when the bot starts!

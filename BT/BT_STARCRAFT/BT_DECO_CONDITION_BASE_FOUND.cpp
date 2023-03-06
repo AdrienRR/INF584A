@@ -16,12 +16,12 @@ bool BT_DECO_CONDITION_BASE_FOUND::FoundEnemyBase(void* data)
 {
     Data* pData = (Data*)data;
     const char* message;
-    if (pData->enemyBaseFound) {
-        BWAPI::Broodwar->sendText("Base found");
-    }
-    else {
-        BWAPI::Broodwar->sendText("Base NOT found");
-    }
+    //if (pData->enemyBaseFound) {
+    //    BWAPI::Broodwar->sendText("Base found");
+    //}
+    //else {
+    //    BWAPI::Broodwar->sendText("Base NOT found");
+    //}
     return pData->enemyBaseFound;
 
 }
