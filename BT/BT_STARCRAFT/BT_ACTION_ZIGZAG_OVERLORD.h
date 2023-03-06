@@ -5,9 +5,9 @@
 #include <BWAPI.h>
 
 //--------------------
-class BT_ACTION_FLEE_OVERLORD : public BT_ACTION {
+class BT_ACTION_ZIGZAG_OVERLORD : public BT_ACTION {
 public:
-    BT_ACTION_FLEE_OVERLORD(std::string name, BT_NODE* parent);
+    BT_ACTION_ZIGZAG_OVERLORD(std::string name, BT_NODE* parent);
 
 private:
     State Evaluate(void* data) override;
