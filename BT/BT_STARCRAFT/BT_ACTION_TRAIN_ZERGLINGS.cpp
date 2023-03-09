@@ -21,7 +21,7 @@ BT_NODE::State BT_ACTION_TRAIN_ZERGLINGS::TrainZerglings(void* data)
     Data* pData = (Data*)data;
 
 
-    // let's build a supply provider
+    // let's build zerglings
     const BWAPI::Unit myDepot = Tools::GetDepot();
     bool startedTraining = myDepot->train(BWAPI::UnitTypes::Zerg_Zergling);
 

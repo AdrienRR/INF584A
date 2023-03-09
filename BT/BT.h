@@ -30,6 +30,7 @@
 
 #include "BT_CONDITION_STEP_1.h"
 #include "BT_CONDITION_STEP_2.h"
+#include "BT_CONDITION_STEP_2B.h"
 #include "BT_CONDITION_STEP_3.h"
 
 ///Decorator Conditions

@@ -20,6 +20,10 @@ BT_NODE::State BT_ACTION_BUILD_POOL::BuildPool(void* data)
 {
     Data* pData = (Data*)data;
 
+    if (Tools::CountUnitsOfType(BWAPI::UnitTypes::Zerg_Spawning_Pool, BWAPI::Broodwar->self()->getUnits()) >= 1) {
+        return BT_NODE::SUCCESS;
+    }
+
     // get the unit to build spawning pool
     BWAPI::UnitType builderType = BWAPI::UnitTypes::Zerg_Spawning_Pool.whatBuilds().first;
 
@@ -37,5 +41,5 @@ BT_NODE::State BT_ACTION_BUILD_POOL::BuildPool(void* data)
     }
 
 
-    return startedBuilding ? BT_NODE::SUCCESS : BT_NODE::RUNNING;
+    return BT_NODE::RUNNING;
 }

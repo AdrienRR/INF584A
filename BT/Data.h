@@ -22,6 +22,8 @@ public:
 
 	bool step1;
 
+	bool step3;
+
 	BWAPI::Unit myOverlord;
 
 	std::vector<BWAPI::TilePosition> visistedStartingPositions;

@@ -15,6 +15,9 @@ std::string BT_CONDITION_STEP_3::GetDescription()
 bool BT_CONDITION_STEP_3::IsStep3Done(void *data)
 {
     Data* pData = (Data*)data;
+    if (pData->step3) {
+        return true;
+    }
     int alreadyTrained = Tools::CountUnitsOfType(BWAPI::UnitTypes::Zerg_Zergling, BWAPI::Broodwar->self()->getUnits());
     int training = 0;
     for (BWAPI::Unit unit : BWAPI::Broodwar->self()->getUnits())
@@ -25,5 +28,9 @@ bool BT_CONDITION_STEP_3::IsStep3Done(void *data)
         }
     }
 
-    return alreadyTrained+training >= 3;
+    if (alreadyTrained + training >= 3) {
+        pData->step3 = true;
+        return true;
+    }
+    return false;
 }

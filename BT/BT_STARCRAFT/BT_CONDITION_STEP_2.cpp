@@ -17,4 +17,5 @@ bool BT_CONDITION_STEP_2::IsStep2Done(void *data)
     Data* pData = (Data*)data;
 
     return Tools::CountUnitsOfType(BWAPI::UnitTypes::Zerg_Spawning_Pool, BWAPI::Broodwar->self()->getUnits()) >= 1;
+
 }

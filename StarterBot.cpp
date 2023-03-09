@@ -54,13 +54,19 @@ StarterBot::StarterBot()
     BT_CONDITION_STEP_2* pConditionStep2 = new BT_CONDITION_STEP_2("Step2Condition", pStep2);
     BT_ACTION_BUILD_POOL* pBuildPool = new BT_ACTION_BUILD_POOL("BuildPool", pStep2);
 
+    BT_SELECTOR* pStep2B = new BT_SELECTOR("Step2BSelector", pBuildOrder, 10);
+    BT_CONDITION_STEP_2B* pConditionStep2B = new BT_CONDITION_STEP_2B("Step2BCondition", pStep2B);
+    BT_ACTION_TRAIN_WORKER* pTrainWorker2B = new BT_ACTION_TRAIN_WORKER("Train2Workers", pStep2B);
+
     BT_SELECTOR* pStep3 = new BT_SELECTOR("Step3Selector", pBuildOrder, 10);
     BT_CONDITION_STEP_3* pConditionStep3 = new BT_CONDITION_STEP_3("Step3Condition", pStep3);
-    BT_ACTION_TRAIN_ZERGLINGS* pMakeZerglings = new BT_ACTION_TRAIN_ZERGLINGS("MakeZerglingsArmy", pStep3);
+    BT_ACTION_TRAIN_ZERGLINGS* pMakeFirstZerglingsArmy = new BT_ACTION_TRAIN_ZERGLINGS("MakeFirstZerglingsArmy", pStep3);
 
-    if (pBuildOrder->SUCCESS) {
-        BT_ACTION_SEND_ZERGLINGS* pSendZerglings = new BT_ACTION_SEND_ZERGLINGS("SendZerglings", pParallelSeq);
-    }
+    BT_DECO_REPEATER* pBuildZerglingsRepeater = new BT_DECO_REPEATER("RepeatBuildZerglings", pBuildOrder, 0, true, false);
+    BT_ACTION_TRAIN_ZERGLINGS* pRepeatMakeZerglings = new BT_ACTION_TRAIN_ZERGLINGS("RepeatMakeZerglings", pBuildZerglingsRepeater);
+
+    BT_ACTION_SEND_ZERGLINGS* pSendZerglings = new BT_ACTION_SEND_ZERGLINGS("SendZerglings", pParallelSeq);
+
 
 
     pData = new Data();
@@ -73,6 +79,7 @@ StarterBot::StarterBot()
     pData->nWantedWorkersFarmingMinerals = NWANTED_WORKERS_FARMING_MINERALS;
 
     pData->step1 = false;
+    pData->step3 = false;
 
 
     //FIND THE OVERLORD 
