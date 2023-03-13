@@ -26,13 +26,15 @@ BT_NODE::State BT_ACTION_TRAIN_WORKER::TrainWorker(void* data)
 
     for (BWAPI::Unit unit : BWAPI::Broodwar->self()->getUnits())
     {
-        if ((unit->getType() == BWAPI::UnitTypes::Zerg_Egg && (unit->getTrainingQueue().at(0) == BWAPI::UnitTypes::Zerg_Overlord)))
+        if ((unit->getType() == BWAPI::UnitTypes::Zerg_Egg && (unit->getTrainingQueue().at(0) == BWAPI::UnitTypes::Zerg_Drone)))
         {
             return BT_NODE::SUCCESS;
         }
     }
-
-    startedBuilding = myDepot->train(workerType);
+    
+    if (myDepot != NULL) {
+        startedBuilding = myDepot->train(workerType);
+    }
 
     if (startedBuilding) {
         pData->step1 = true;
