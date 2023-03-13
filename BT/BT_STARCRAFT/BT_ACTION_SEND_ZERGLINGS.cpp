@@ -87,17 +87,30 @@ BT_NODE::State BT_ACTION_SEND_ZERGLINGS::SendZerglings(void* data)
                     }
                 }
             }
-            auto zerglingIterator = myZerglings.begin();
-            while (zerglingIterator != myZerglings.end()) {
-                BWAPI::Position pose = (*zerglingIterator)->getPosition();
-                BWAPI::Unitset squad;
-                squad.insert((*zerglingIterator));
-                zerglingIterator++;
-                while (zerglingIterator != myZerglings.end() && squad.size()<=6 && (*zerglingIterator)->getPosition().getDistance(pose) < 300) {
+            const int size = myZerglings.size();
+            std::vector<bool> inSquad;
+            inSquad.resize(size);
+            for (auto i = 0; i < size; i++) {
+                inSquad.at(i) = false;
+            }
+            int counter = 0;
+            for (auto zerglingIterator = myZerglings.begin(); zerglingIterator != myZerglings.end(); zerglingIterator++) {
+                if (!inSquad.at(counter)) {
+                    BWAPI::Position pose = (*zerglingIterator)->getPosition();
+                    BWAPI::Unitset squad;
                     squad.insert((*zerglingIterator));
-                    zerglingIterator++;
+                    inSquad.at(counter) = true;
+                    int counter2 = counter;
+                    for (auto j = zerglingIterator; j != myZerglings.end(); j++) {
+                        if (!inSquad.at(counter2) && squad.size() < 6 && (*j)->getPosition().getDistance(pose) < 300) {
+                            squad.insert((*j));
+                            inSquad.at(counter2) = true;
+                        }
+                        counter2++;
+                    }
+                    zerglingSquads.push_back(squad);
                 }
-                zerglingSquads.push_back(squad);
+                counter++;
             }
 
             int nSquad = 0;
