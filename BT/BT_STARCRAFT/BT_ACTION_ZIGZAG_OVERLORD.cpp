@@ -38,8 +38,8 @@ BT_NODE::State BT_ACTION_ZIGZAG_OVERLORD::MoveOverlord(void* data)
     }
 
     overlord->move(targetPosition);
-    std::string message = "Circling";
-    BWAPI::Broodwar->sendText(message.c_str());
+    //std::string message = "Circling";
+    //BWAPI::Broodwar->sendText(message.c_str());
 
 
 

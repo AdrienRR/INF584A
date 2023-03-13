@@ -28,9 +28,10 @@ BT_NODE::State BT_ACTION_BUILD_POOL::BuildPool(void* data)
     BWAPI::UnitType builderType = BWAPI::UnitTypes::Zerg_Spawning_Pool.whatBuilds().first;
 
     BWAPI::Unit builder = Tools::GetUnitOfType(builderType);
+    bool enoughMinerals = BWAPI::Broodwar->self()->minerals() >= 200;
 
     bool startedBuilding = false;
-    if (builder)
+    if (enoughMinerals && builder)
     {
         //Location to build
         BWAPI::TilePosition startPos = BWAPI::Broodwar->self()->getStartLocation();

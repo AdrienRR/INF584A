@@ -2,7 +2,8 @@
 
 #include <BWAPI.h>
 #include <cmath>
-
+#include <set>
+#include <vector>
 
 namespace Tools
 {
