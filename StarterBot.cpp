@@ -137,6 +137,19 @@ void StarterBot::onFrame()
 
     exploreMinerals();
 
+    bool enoughMinerals = BWAPI::Broodwar->self()->minerals() >= 350;
+    if (enoughMinerals) {
+        BWAPI::UnitType builderType = BWAPI::UnitTypes::Zerg_Hatchery.whatBuilds().first;
+        BWAPI::Unit builder = Tools::GetUnitOfType(builderType);
+        if (builder) {
+            BWAPI::TilePosition startPos = BWAPI::Broodwar->self()->getStartLocation();
+            int maxBuildRange = 80;
+            bool buildingOnCreep = BWAPI::UnitTypes::Zerg_Hatchery.requiresCreep();
+            BWAPI::TilePosition buildPos = BWAPI::Broodwar->getBuildLocation(BWAPI::UnitTypes::Zerg_Hatchery, startPos, maxBuildRange, buildingOnCreep);
+            builder->build(BWAPI::UnitTypes::Zerg_Hatchery, buildPos);
+        }
+    }
+
     /*
     // Send our idle workers to mine minerals so they don't just stand there
     sendIdleWorkersToMinerals();

@@ -25,5 +25,18 @@ BT_NODE::State BT_ACTION_TRAIN_ZERGLINGS::TrainZerglings(void* data)
     const BWAPI::Unit myDepot = Tools::GetDepot();
     bool startedTraining = myDepot->train(BWAPI::UnitTypes::Zerg_Zergling);
 
+    if (startedTraining) {
+        return BT_NODE::SUCCESS;
+    }
+
+    for (auto& unit : BWAPI::Broodwar->self()->getUnits()) {
+        if (unit->getType() == BWAPI::UnitTypes::Zerg_Hatchery) {
+            startedTraining = unit->train(BWAPI::UnitTypes::Zerg_Zergling);
+        }
+        if (startedTraining) {
+            return BT_NODE::SUCCESS;
+        }
+    }
+
     return startedTraining ? BT_NODE::SUCCESS:BT_NODE::RUNNING;
 }

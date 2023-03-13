@@ -71,7 +71,6 @@ BT_NODE::State BT_ACTION_SEND_ZERGLINGS::SendZerglings(void* data)
         }
         else {
             BWAPI::Unitset myZerglings;
-            BWAPI::Unit ZerglingCommander;
             double best_dist_to_base_ennemy = 9999999999.0;
             std::vector<BWAPI::Unitset> zerglingSquads;
 
@@ -80,11 +79,6 @@ BT_NODE::State BT_ACTION_SEND_ZERGLINGS::SendZerglings(void* data)
                 if (u->getType() == BWAPI::UnitTypes::Zerg_Zergling)
                 {
                     myZerglings.insert(u);
-                    double dist_to_base_ennemy = (*u).getPosition().getDistance(pData->enemyBase);
-                    if (dist_to_base_ennemy < best_dist_to_base_ennemy) {
-                        best_dist_to_base_ennemy = dist_to_base_ennemy;
-                        ZerglingCommander = u;
-                    }
                 }
             }
             const int size = myZerglings.size();
