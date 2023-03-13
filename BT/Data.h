@@ -27,6 +27,8 @@ public:
 	BWAPI::Unit myOverlord;
 
 	std::vector<BWAPI::TilePosition> visistedStartingPositions;
+	std::vector<BWAPI::TilePosition> unvisitedMinerals;
+	std::vector<BWAPI::Unit> mineralsExploringOverlords;
 
 	BWAPI::Position enemyBase;
 

@@ -21,6 +21,8 @@ public:
     void trainAdditionalWorkers();
     void buildAdditionalSupply();
     void drawDebugInformation();
+	void exploreMinerals();
+	bool compareByDistanceToEnemy(const BWAPI::TilePosition& a, const BWAPI::TilePosition& b);
 
     // functions that are triggered by various BWAPI events from main.cpp
 	void onStart();
