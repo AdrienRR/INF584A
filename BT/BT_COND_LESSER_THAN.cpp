@@ -13,7 +13,9 @@ template <class T> BT_NODE::State BT_COND_LESSER_THAN<T>::Evaluate(void* data) {
 
 template <class T> std::string BT_COND_LESSER_THAN<T>::GetDescription()
 {
-    return  std::format("BT_COND_LESSER_THAN {}", Threshold); 
+    //return  std::format("BT_COND_LESSER_THAN {}", Threshold); 
+    return "hello";
+
 }
 
 template class BT_COND_LESSER_THAN<int>;

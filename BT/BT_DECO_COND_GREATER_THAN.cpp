@@ -14,7 +14,8 @@ template <class T> BT_NODE::State BT_DECO_COND_GREATER_THAN<T>::Evaluate(void* d
 
 template <class T> std::string BT_DECO_COND_GREATER_THAN<T>::GetDescription()
 {
-    return  std::format("BT_DECO_COND_GREATER_THAN {}", Threshold); 
+    //return  std::format("BT_DECO_COND_GREATER_THAN {}", Threshold); 
+    return "hello";
 }
 
 // Add your specialized template instantiations here

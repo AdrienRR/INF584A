@@ -32,5 +32,7 @@ void BT_DECO_REPEATER::Reset()
 
 std::string BT_DECO_REPEATER::GetDescription()
 {
-	return std::format("DECO_REPEATER (nMaxRepeats = {}, repeatForever = {}, endOnFailure = {}",NMaxRepeats,RepeatForever,EndOnFailure);
+	//return std::format("DECO_REPEATER (nMaxRepeats = {}, repeatForever = {}, endOnFailure = {}",NMaxRepeats,RepeatForever,EndOnFailure);
+	return "hello";
+
 }
