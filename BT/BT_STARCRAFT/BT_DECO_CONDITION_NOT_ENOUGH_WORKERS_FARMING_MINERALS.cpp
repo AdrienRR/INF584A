@@ -16,5 +16,18 @@ bool BT_DECO_CONDITION_NOT_ENOUGH_WORKERS_FARMING_MINERALS::IsThereNotEnoughWork
 {
     Data* pData = (Data*)data;
     
-    return (int)pData->unitsFarmingMinerals.size() <pData->nWantedWorkersFarmingMinerals;
+    // We want to harvest gas to unlock metabolic boost
+    bool hasMetabolicBoost = BWAPI::Broodwar->self()->getUpgradeLevel(BWAPI::UpgradeTypes::Metabolic_Boost) > 0;
+    if (BWAPI::Broodwar->self()->completedUnitCount(BWAPI::UnitTypes::Zerg_Extractor) > 0 && !hasMetabolicBoost && BWAPI::Broodwar->self()->gas() < 100) {
+        int numGasHarvesters = 0;
+        BWAPI::Unitset myUnits = BWAPI::Broodwar->self()->getUnits();
+        for (auto& u : myUnits) {
+            if (u->getType() == BWAPI::UnitTypes::Zerg_Drone && u->isGatheringGas()) {
+                numGasHarvesters++;
+            }
+        }
+        return !(numGasHarvesters > 0) && ((int)pData->unitsFarmingMinerals.size() < pData->nWantedWorkersFarmingMinerals - 1);
+    }
+
+    return (int)pData->unitsFarmingMinerals.size() < pData->nWantedWorkersFarmingMinerals;
 }

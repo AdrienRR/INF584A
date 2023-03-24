@@ -26,5 +26,7 @@ BT_NODE::State BT_ACTION_WAIT::Evaluate(void* data)
 
 std::string BT_ACTION_WAIT::GetDescription()
 {
-    return std::format("WAIT ACTION {}s", Duration);
+    //return std::format("WAIT ACTION {}s", Duration);
+    return "hello";
+
 }

@@ -22,7 +22,6 @@ StarterBot::StarterBot()
 
     BT_DECO_CONDITION_BASE_FOUND* pFoundBase = new BT_DECO_CONDITION_BASE_FOUND("FoundBase", pSelectorOverlordEnoughHP);
 
-    //TEMP !!! SHOULD NOT BE FLEE BUT ZIG ZAG
     BT_ACTION_ZIGZAG_OVERLORD* pZigZagOverlord = new BT_ACTION_ZIGZAG_OVERLORD("ZigZagOverlord", pFoundBase);
 
     BT_ACTION_SCOUT_OVERLORD* pScoutOverlord = new BT_ACTION_SCOUT_OVERLORD("ScoutOverlord", pSelectorOverlordEnoughHP);
@@ -61,6 +60,8 @@ StarterBot::StarterBot()
     BT_SELECTOR* pStep3 = new BT_SELECTOR("Step3Selector", pBuildOrder, 10);
     BT_CONDITION_STEP_3* pConditionStep3 = new BT_CONDITION_STEP_3("Step3Condition", pStep3);
     BT_ACTION_TRAIN_ZERGLINGS* pMakeFirstZerglingsArmy = new BT_ACTION_TRAIN_ZERGLINGS("MakeFirstZerglingsArmy", pStep3);
+
+
 
     BT_DECO_REPEATER* pBuildZerglingsRepeater = new BT_DECO_REPEATER("RepeatBuildZerglings", pBuildOrder, 0, true, false);
     BT_ACTION_TRAIN_ZERGLINGS* pRepeatMakeZerglings = new BT_ACTION_TRAIN_ZERGLINGS("RepeatMakeZerglings", pBuildZerglingsRepeater);
@@ -137,8 +138,10 @@ void StarterBot::onFrame()
 
     exploreMinerals();
 
-    bool enoughMinerals = BWAPI::Broodwar->self()->minerals() >= 350;
-    if (enoughMinerals) {
+
+    // if we have enough minerals to build a new hatchery, do so
+    bool enoughMineralsHatchery = BWAPI::Broodwar->self()->minerals() >= 350;
+    if (enoughMineralsHatchery) {
         BWAPI::UnitType builderType = BWAPI::UnitTypes::Zerg_Hatchery.whatBuilds().first;
         BWAPI::Unit builder = Tools::GetUnitOfType(builderType);
         if (builder) {
@@ -150,16 +153,43 @@ void StarterBot::onFrame()
         }
     }
 
-    /*
-    // Send our idle workers to mine minerals so they don't just stand there
-    sendIdleWorkersToMinerals();
+    // If we have 2 hatcheries or more, we want to upgrade metabolic boost
+    int numHatcheries = 0;
+    for (auto& unit : BWAPI::Broodwar->self()->getUnits()) {
+        if (unit->getType() == BWAPI::UnitTypes::Zerg_Hatchery) {
+            numHatcheries++;
+        }
+    }
+    bool hatchery = numHatcheries > 1;
+    
+    // first build an esxtractor
+    bool enoughMineralsExtractor = BWAPI::Broodwar->self()->minerals() >= 50 && !(BWAPI::Broodwar->self()->completedUnitCount(BWAPI::UnitTypes::Zerg_Extractor) > 0);
+    if (enoughMineralsExtractor && hatchery) {
+        BWAPI::UnitType builderType = BWAPI::UnitTypes::Zerg_Extractor.whatBuilds().first;
+        BWAPI::Unit builder = Tools::GetUnitOfType(builderType);
+        if (builder) {
+            // Find a suitable location for the extractor
+            BWAPI::TilePosition location = BWAPI::Broodwar->getBuildLocation(BWAPI::UnitTypes::Zerg_Extractor, builder->getTilePosition());
+            builder->build(BWAPI::UnitTypes::Zerg_Extractor, location);
+        }
+    }
 
-    // Train more workers so we can gather more income
-    trainAdditionalWorkers();
+    // Then upgrade metabolic boost
+    bool hasMetabolicBoost = BWAPI::Broodwar->self()->getUpgradeLevel(BWAPI::UpgradeTypes::Metabolic_Boost) > 0;
+    bool enoughSpeed = BWAPI::Broodwar->self()->minerals() >= 100 && BWAPI::Broodwar->self()->gas() >= 100 && !hasMetabolicBoost;
+    if (enoughSpeed && hatchery) {
+        // Find the Spawning Pool
+        BWAPI::Unit spawningPool = nullptr;
+        BWAPI::Unitset myUnits = BWAPI::Broodwar->self()->getUnits();
+        for (auto& unit : myUnits) {
+            if (unit->getType() == BWAPI::UnitTypes::Zerg_Spawning_Pool) {
+                spawningPool = unit;
+                break;
+            }
+        }
+        spawningPool->upgrade(BWAPI::UpgradeTypes::Metabolic_Boost);
+    }
 
-    // Build more supply if we are going to run out soon
-    buildAdditionalSupply();
-    */
 
     // Draw unit health bars, which brood war unfortunately does not do
     Tools::DrawUnitHealthBars();
